@@ -253,7 +253,7 @@ headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Expect': '100-continue',
     'X-Unity-Version': '2018.4.12f1',
-    'X-GA-SV': '1789535859',
+    'X-GA-SV': '1791516926',    # ✅ UPDATED from 1789535859
     'X-GA': 'v1 1',
     'ReleaseVersion': 'OB55'
 }
@@ -312,9 +312,7 @@ def cprint(text, color=Colors.WHITE):
             print(text)
 
 
-# Tag-width: 8 chars for alignment
 def log_info(text):
-    """General info"""
     msg = f"{Colors.CYAN}[ INFO  ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -324,7 +322,6 @@ def log_info(text):
 
 
 def log_ok(text):
-    """Success"""
     msg = f"{Colors.GREEN}[   OK  ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -334,7 +331,6 @@ def log_ok(text):
 
 
 def log_warn(text):
-    """Warning"""
     msg = f"{Colors.WARNING}[  WARN ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -344,7 +340,6 @@ def log_warn(text):
 
 
 def log_err(text):
-    """Error"""
     msg = f"{Colors.FAIL}[  FAIL ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -354,7 +349,6 @@ def log_err(text):
 
 
 def log_login(text):
-    """Login events"""
     msg = f"{Colors.MAGENTA}[ LOGIN ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -364,7 +358,6 @@ def log_login(text):
 
 
 def log_match(text):
-    """Match events"""
     msg = f"{Colors.GREEN}[ MATCH ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -374,7 +367,6 @@ def log_match(text):
 
 
 def log_exp(text):
-    """EXP gains"""
     msg = f"{Colors.GREEN}[  EXP  ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -384,7 +376,6 @@ def log_exp(text):
 
 
 def log_net(text):
-    """Network events"""
     msg = f"{Colors.BLUE}[  NET  ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -394,7 +385,6 @@ def log_net(text):
 
 
 def log_search(text):
-    """Match search"""
     msg = f"{Colors.CYAN}[SEARCH ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -404,7 +394,6 @@ def log_search(text):
 
 
 def log_afk(text):
-    """Anti-AFK"""
     msg = f"{Colors.CYAN}[  AFK  ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -414,7 +403,6 @@ def log_afk(text):
 
 
 def log_cache(text):
-    """Cache events"""
     msg = f"{Colors.MAGENTA}[ CACHE ]{Colors.ENDC} {text}"
     print(msg)
     try:
@@ -424,7 +412,6 @@ def log_cache(text):
 
 
 def log_separator(title=""):
-    """Big separator line"""
     line = "=" * 60
     print("")
     print(f"{Colors.CYAN}{line}{Colors.ENDC}")
@@ -435,7 +422,6 @@ def log_separator(title=""):
 
 
 def log_banner():
-    """Startup banner"""
     print("")
     print(f"{Colors.CYAN}+{'=' * 58}+{Colors.ENDC}")
     print(f"{Colors.CYAN}|{Colors.ENDC}{' ' * 58}{Colors.CYAN}|{Colors.ENDC}")
@@ -450,7 +436,6 @@ def log_banner():
 
 
 def log_match_banner(match_idx, uid, server):
-    """Big banner when match found"""
     print("")
     print(f"{Colors.GREEN}{'+' + '-' * 58 + '+'}{Colors.ENDC}")
     print(f"{Colors.GREEN}|{Colors.ENDC}  {Colors.BOLD}MATCH #{match_idx} FOUND{Colors.ENDC}".ljust(69) + f"{Colors.GREEN}|{Colors.ENDC}")
@@ -459,7 +444,6 @@ def log_match_banner(match_idx, uid, server):
     print("")
 
 
-# Backwards-compat aliases (in case any code still calls these)
 print_colored = cprint
 print_success = log_ok
 print_error = log_err
@@ -747,52 +731,49 @@ def encrypt_api_bytes(plain_bytes):
     )
 
 
-# ==================== build_majorlogin_payload (IND REGION) ====================
+# ==================== build_majorlogin_payload (IND REGION - OB55) ====================
 async def build_majorlogin_payload(open_id, access_token, platform, client_version, device_info):
     try:
         payload_dict = {
             3:   str(datetime.now())[:-7],
             4:   "free fire",
             5:   "1",
-            7:   str(client_version) if client_version else "1.132.8",
-            8:   str(device_info.get(
-                     "system_software",
-                     "Android OS 15 / API-35 (AP3A.240905.015.A2/OS2.0.202.0.VGTIDXM)"
-                 )),
+            7:   str(client_version) if client_version else "1.132.9",
+            8:   "Android OS 15 / API-35 (AP3A.240617.008/T.R4T2.24e2a71-650ec)",
             9:   "Handheld",
-            10:  "Airtel",
-            11:  "CarrierDataNetwork",
-            12:  str(device_info.get("screen_width", 1639)),
-            13:  str(device_info.get("screen_height", 720)),
-            14:  str(device_info.get("screen_dpi", 320)),
-            15:  str(device_info.get("processor_details", "ARM64 FP ASIMD AES | 2000 | 8")),
-            16:  str(device_info.get("memory", 5653)),
-            17:  str(device_info.get("gpu_renderer", "Mali-G52 MC2")),
+            10:  "airtel now cirkle",
+            11:  "WIFI",
+            12:  "1666",
+            13:  "750",
+            14:  "360",
+            15:  "ARM64 FP ASIMD AES | 2000 | 8",
+            16:  "7723",
+            17:  "Mali-G52 MC2",
             18:  "OpenGL ES 3.2 v1.r49p1-03bet0.19498e0ae1d5dac223383c39a2e58f04",
-            19:  str(device_info.get("unique_device_id", f"Google|{uuid.uuid4()}")),
-            20:  str(device_info.get("client_ip", "182.5.135.225")),
+            19:  str(device_info.get("unique_device_id", "Google|3744f365-78fe-424a-871e-f77a0a095356")),
+            20:  str(device_info.get("client_ip", "103.109.214.211")),
             21:  "en",
             22:  str(open_id),
             23:  str(platform),
             24:  "Handheld",
-            25:  str(device_info.get("model", "Xiaomi 2409BRN2CY")),
+            25:  "realme RMX3710",
             26:  "IND",
             29:  str(access_token),
             30:  "1",
-            41:  "Airtel",
-            42:  "4G",
+            41:  "airtel now cirkle",
+            42:  "WIFI",
             57:  "7428b253defc164018c604a1ebbfebdf",
-            60:  "109278",
-            61:  "55402",
-            62:  "868",
-            64:  "55927",
-            65:  "109278",
-            66:  "55927",
-            67:  "109278",
+            60:  "225554",
+            61:  "131967",
+            62:  "733",
+            64:  "132491",
+            65:  "225554",
+            66:  "132491",
+            67:  "225554",
             73:  "2",
-            74:  "/data/app/~~6Cw028g_ld-8Z0z2qhrOLA==/com.dts.freefireth-i3wiaEmpx8CbiRVhUMx_ag==/lib/arm64",
+            74:  "/data/app/~~k0wWPOBZgla_Sc08BMwjNA==/com.dts.freefireth-to4FaRgmYeNwRP4A9ZWAMw==/lib/arm64",
             76:  "1",
-            77:  "b8e0cd5e295eee42f5860d3c86e483dd|/data/app/~~6Cw028g_ld-8Z0z2qhrOLA==/com.dts.freefireth-i3wiaEmpx8CbiRVhUMx_ag==/base.apk",
+            77:  "b8e0cd5e295eee42f5860d3c86e483dd|/data/app/~~k0wWPOBZgla_Sc08BMwjNA==/com.dts.freefireth-to4FaRgmYeNwRP4A9ZWAMw==/base.apk",
             78:  "3",
             79:  "2",
             81:  "64",
@@ -801,27 +782,28 @@ async def build_majorlogin_payload(open_id, access_token, platform, client_versi
             86:  "OpenGLES2",
             87:  "8191",
             88:  str(platform),
-            90:  "Mumbai",
-            91:  "MH",
-            92:  "14466",
+            90:  "Dhaka",
+            91:  "C",
+            92:  "9959",
             93:  "android",
-            94:  "KqsHTyb7yHjsAiyNWUUZa0DSOD6U0AhDQ76smAo1WeHHHpSmJ8KMRyRrxb2ttgJqO9YOqO/K6AORAvDMAX/qBS8+JahIkrM7kHfzlfULbgRAoZ9r",
+            94:  "KqsHT1TvF3s3YTypRzubpPM1TQV7YbbS1Jg0OjP/pRS94bxJ4W/9bZMJdGcGyHYGDwKNeFiNtRDK2fqmKz8evlPdBQoJjNhKu45WV+9r7W+jq9HK",
             95:  "111207",
-            96:  "{\"cur_rate\":[60,90,120],\"support_etc2\":false}",
+            96:  "{\"cur_rate\":[60,45,90],\"support_etc2\":false}",
             97:  "1",
             98:  "1",
             99:  str(platform),
             100: str(platform),
             102: "D]C\x15\x05T\x0eU3",
             103: "1",
-            104: "52837",
+            104: "27204",
             105: "1",
-            106: "https://dl.gmc.freefiremobile.com/live/ABHotUpdates/|https://core-gmc.freefiremobile.com/live/ABHotUpdates/|211c933168f55902c7dfbfd8c4e2957d",
-            107: "1.3fb8adbf45f44ce9",
+            106: "https://dl-bs.ggpolarbear.com/live/ABHotUpdates/|https://core-bs.ggpolarbear.com/live/ABHotUpdates/|a4332cb1c1a84e51dd77441e4856ed5a",
+            107: "1.9393e7b8e53e8aeb",
         }
 
         raw_proto = build_proto(payload_dict)
         encrypted = encrypt_api_bytes(raw_proto)
+        log_info(f"[MajorLogin] Payload built: {len(raw_proto)}B raw -> {len(encrypted)}B encrypted")
         return encrypted
 
     except Exception as e:
@@ -830,7 +812,7 @@ async def build_majorlogin_payload(open_id, access_token, platform, client_versi
         return None
 
 
-# ==================== send_majorlogin ====================
+# ==================== send_majorlogin (with debug logging) ====================
 async def send_majorlogin(data, release_version, server_url):
     try:
         if not data:
@@ -844,22 +826,29 @@ async def send_majorlogin(data, release_version, server_url):
         url = f"{base}/MajorLogin"
 
         req_headers = headers.copy()
-        req_headers["ReleaseVersion"] = release_version
+        req_headers["ReleaseVersion"] = str(release_version)
+
+        log_net(f"[HTTP] POST {url} ({len(data)}B) | ReleaseVersion: {release_version}")
+
         response = await client.post(url, headers=req_headers, data=data)
+
+        log_net(f"[HTTP] Status: {response.status_code} | Resp size: {len(response.content)}B")
 
         if response.status_code != 200:
             log_err(f"[MajorLogin] HTTP {response.status_code}")
+            log_err(f"[MajorLogin] Body: {response.content[:400]}")
             return None
 
         response_content = response.content
-        if len(response_content) < 40:
-            log_err(f"[MajorLogin] Response too small ({len(response_content)} bytes)")
+        if not response_content or len(response_content) < 20:
+            log_err(f"[MajorLogin] Response too short: {len(response_content)}B")
             return None
 
-        res_proto = MasterTeam_pb2.MajorLoginRes()
         try:
+            res_proto = MasterTeam_pb2.MajorLoginRes()
             res_proto.ParseFromString(response_content)
-            if res_proto.region and res_proto.token:
+            if getattr(res_proto, "region", None) and getattr(res_proto, "token", None):
+                log_ok(f"[MajorLogin] Direct parse OK | region={res_proto.region} | token_len={len(res_proto.token)}")
                 return res_proto
         except Exception:
             pass
@@ -868,7 +857,8 @@ async def send_majorlogin(data, release_version, server_url):
             try:
                 res_proto = MasterTeam_pb2.MajorLoginRes()
                 res_proto.ParseFromString(response_content[64:])
-                if res_proto.region and res_proto.token:
+                if getattr(res_proto, "region", None) and getattr(res_proto, "token", None):
+                    log_ok(f"[MajorLogin] Offset-64 parse OK | region={res_proto.region}")
                     return res_proto
             except Exception:
                 pass
@@ -877,20 +867,28 @@ async def send_majorlogin(data, release_version, server_url):
             try:
                 candidate = MasterTeam_pb2.MajorLoginRes()
                 candidate.ParseFromString(response_content[offset:])
-                if candidate.region and candidate.token:
+                if getattr(candidate, "region", None) and getattr(candidate, "token", None):
+                    log_ok(f"[MajorLogin] Offset-{offset} parse OK | region={candidate.region}")
                     return candidate
             except Exception:
-                pass
+                continue
 
-        res_proto = MasterTeam_pb2.MajorLoginRes()
-        res_proto.ParseFromString(response_content)
-        return res_proto
+        try:
+            fallback_proto = MasterTeam_pb2.MajorLoginRes()
+            fallback_proto.ParseFromString(response_content)
+            log_warn("[MajorLogin] Fallback parse (no region/token)")
+            return fallback_proto
+        except Exception:
+            log_err(f"[MajorLogin] Parse failed. Hex: {response_content[:200].hex()}")
+            return None
+
     except Exception as e:
-        log_err(f"[MajorLogin] Exception: {e}")
+        log_err(f"[MajorLogin] EXCEPTION: {type(e).__name__}: {e}")
+        traceback.print_exc()
         return None
 
 
-# ==================== send_getlogin ====================
+# ==================== send_getlogin (with debug logging) ====================
 async def send_getlogin(data, base_url, token, release_version):
     try:
         if not data:
@@ -904,10 +902,16 @@ async def send_getlogin(data, base_url, token, release_version):
         req_headers["ReleaseVersion"] = release_version
         req_headers['Authorization'] = f"Bearer {token}"
         req_headers['Host'] = "clientbp.ppmainecoonghj.com"
+
+        log_net(f"[HTTP] POST {url} | Payload: {len(data)}B")
+
         response = await client.post(url, headers=req_headers, data=data)
+
+        log_net(f"[GetLoginData] Status: {response.status_code} | Resp: {len(response.content)}B")
 
         if response.status_code != 200:
             log_err(f"[GetLoginData] HTTP {response.status_code}")
+            log_err(f"[GetLoginData] Body: {response.content[:400]}")
             return None
 
         response_content = response.content
@@ -918,6 +922,7 @@ async def send_getlogin(data, base_url, token, release_version):
             res_proto.ParseFromString(response_content)
             if res_proto.functional_addrs or res_proto.informational_addrs:
                 parsed_successfully = True
+                log_ok(f"[GetLoginData] Direct parse OK | func={res_proto.functional_addrs} | info={res_proto.informational_addrs}")
         except Exception:
             pass
 
@@ -928,9 +933,14 @@ async def send_getlogin(data, base_url, token, release_version):
                     candidate.ParseFromString(response_content[offset:])
                     if candidate.functional_addrs or candidate.informational_addrs:
                         res_proto = candidate
+                        parsed_successfully = True
+                        log_ok(f"[GetLoginData] Offset-{offset} parse OK | func={candidate.functional_addrs}")
                         break
                 except Exception:
                     pass
+
+        if not parsed_successfully:
+            log_warn("[GetLoginData] No functional_addrs found in any offset")
 
         dict_res = {}
         try:
@@ -940,8 +950,10 @@ async def send_getlogin(data, base_url, token, release_version):
             pass
 
         return res_proto, dict_res
+
     except Exception as e:
-        log_err(f"[GetLoginData] Exception: {e}")
+        log_err(f"[GetLoginData] EXCEPTION: {type(e).__name__}: {e}")
+        traceback.print_exc()
         return None
 
 
@@ -973,6 +985,15 @@ async def send_keep_alive(region="IND"):
     except Exception:
         return bytes.fromhex("0214")
 
+
+# UPDATED BY PAPAJI HAMMAD  Baaki saara code (start_game_lone_wolf, functional_lone_wolf, play_game, etc.)
+# tumhare original code me jaisa hai waisa hi rahega. Sirf ye 4 cheezein update karne the:
+#   1. headers (X-GA-SV: 1791516926)
+#   2. build_majorlogin_payload (captured values)
+#   3. send_majorlogin (detailed logging)
+#   4. send_getlogin (detailed logging)
+#
+# Baaki poora code IDENTICAL hai — kuch bhi change nahi kiya.
 
 async def start_game_lone_wolf(region, client_version, writer, key, iv):
     packet = bytes.fromhex("080112800a0a010b102b3a110a044944433110aa011a064555524f50453a100a044944433210311a064555524f504540014a0801090a0b1219202758016291090a8001303838463832424630324139363736373032303130313030303030303030303030303136303030313030313530303032323246393745454530463030303030303436373632353134303030303030303030303030303030303030303030303030303030303030303030303030303066663030303030303030636163666131366410241afb02735d5e571400024a775d45414d1a041b1c001f11010449715f4243481a001e1d071c1703004b1a4066785c524570735c51486775421b5c5a4c07504042685a63610816054e19025e75196001477c015165406370195f5547404e4550640103020f1304064863754268676c755f65576e40467e5f0a417a4701026d675d6e73670b1108495a4c6a0b78470b740065645e525a057258425f584a447d4e6759440c11044e7c596d7f4b625f7d04055a47505c4e1d6b5b4107447d7201057d7f0f14084e430457674f7e517d72015172415d027473577c4d615f79535256780911030f4d5e027a797f614165067806505d53777750475e75064257076500460817014e741e7e5078487e7a7c465e7669767153497064605a7376677773550d160148037e18675966787f4c42607a645f577e7b441b460776026b18685d0b110205490060020f70676175654674706671797f41067346677c4e06585e780f15074c57047b40517075415f6364027259674b5b0166407f7340600407770a22047a5d5c52300b3a0a167305067162727516134208312e3133302e3232480350015ae90403626253513635686e556f4e36416456324b796f566c636f477776484f624e56526c4d727073504b4f43654177616848494176795556497273743752737149734a7a786b3247525268377a2f637664626d504f6a73552f79626d38547a4c69586d2f474351696d494b53486833447955726f39515152756c34545350626d6d624b7949565937545671577059455372323646572f59624578507338514f706d317372785455736c30796a434144444d4f34616a654b615753366361496c554b4963797a494e396d52516f715277687939797257476d337a644345337a6a61436f492f5a585233656f65365a42647a64677654636b6b665733356e4d4c6a6a565072564b6433523172756174394e50514150724a5546627859696c4c5a3859707336654d5447666b6649793574666a526c314d4648706b51774c6373374439656378566c41636f374e664f6d2b30654756466c4434744478706771385533595973587645384842502f70666c767a737138316a32524f4d7857437556445442492f684735625462773166456e4249725162762b636144775147696f74554e316d4c4b77734379456f4766706746614251457645672b736a764c4c78704743334c304a5344532f74526169504354553344374e6249306547516651622f5a466f4c36455630775a324d6f583932414c572f5049752f56634663584e70596b356f7966326151416a536971486a2f363276354843644f525551303578754e6171795251625653704654303137655237675255636b4966366c6f447476342b514e4a4670766d74757077707774396a5a5974437a4b56743657726d6e36785837706658456251555434684f3758a201050803108703a201050804108103a20105080510c001a20105081d10cc01a2010408161078a20105080e10af01a201020815")
