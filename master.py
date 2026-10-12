@@ -253,7 +253,7 @@ headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Expect': '100-continue',
     'X-Unity-Version': '2018.4.12f1',
-    'X-GA-SV': '1791516926',    # ✅ UPDATED from 1789535859
+    'X-GA-SV': '1789535859',    # ✅ UPDATED from 1789535859
     'X-GA': 'v1 1',
     'ReleaseVersion': 'OB55'
 }
@@ -732,8 +732,20 @@ def encrypt_api_bytes(plain_bytes):
 
 
 # ==================== build_majorlogin_payload (IND REGION - OB55) ====================
+# ==================== build_majorlogin_payload (FIXED - REAL DEVICE ID) ====================
 async def build_majorlogin_payload(open_id, access_token, platform, client_version, device_info):
     try:
+        # 👇 Tumhara real device ID (Android ID)
+        ANDROID_ID = "8e22b67ad7bc13c4"
+        
+        # UUID format me convert karo (8-4-4-4-12)
+        expanded = ANDROID_ID + ANDROID_ID  # 32 chars
+        DEVICE_UUID = (
+            f"{expanded[:8]}-{expanded[8:12]}-{expanded[12:16]}-"
+            f"{expanded[16:20]}-{expanded[20:32]}"
+        )
+        # Result: 8e22b67a-d7bc-13c4-8e22-b67ad7bc13c4
+        
         payload_dict = {
             3:   str(datetime.now())[:-7],
             4:   "free fire",
@@ -741,16 +753,16 @@ async def build_majorlogin_payload(open_id, access_token, platform, client_versi
             7:   str(client_version) if client_version else "1.132.9",
             8:   "Android OS 15 / API-35 (AP3A.240617.008/T.R4T2.24e2a71-650ec)",
             9:   "Handheld",
-            10:  "airtel now cirkle",
+            10:  "Airtel",
             11:  "WIFI",
-            12:  "1666",
-            13:  "750",
-            14:  "360",
+            12:  "1080",
+            13:  "2400",
+            14:  "420",
             15:  "ARM64 FP ASIMD AES | 2000 | 8",
             16:  "7723",
             17:  "Mali-G52 MC2",
             18:  "OpenGL ES 3.2 v1.r49p1-03bet0.19498e0ae1d5dac223383c39a2e58f04",
-            19:  str(device_info.get("unique_device_id", "Google|3744f365-78fe-424a-871e-f77a0a095356")),
+            19:  f"Google|8e22b67a-d7bc-13c4-8e22-b67ad7bc13c4",     # ✅ UUID format
             20:  str(device_info.get("client_ip", "103.109.214.211")),
             21:  "en",
             22:  str(open_id),
@@ -760,7 +772,7 @@ async def build_majorlogin_payload(open_id, access_token, platform, client_versi
             26:  "IND",
             29:  str(access_token),
             30:  "1",
-            41:  "airtel now cirkle",
+            41:  "Airtel",
             42:  "WIFI",
             57:  "7428b253defc164018c604a1ebbfebdf",
             60:  "225554",
@@ -782,8 +794,8 @@ async def build_majorlogin_payload(open_id, access_token, platform, client_versi
             86:  "OpenGLES2",
             87:  "8191",
             88:  str(platform),
-            90:  "Dhaka",
-            91:  "C",
+            90:  "Mumbai",
+            91:  "MH",
             92:  "9959",
             93:  "android",
             94:  "KqsHT1TvF3s3YTypRzubpPM1TQV7YbbS1Jg0OjP/pRS94bxJ4W/9bZMJdGcGyHYGDwKNeFiNtRDK2fqmKz8evlPdBQoJjNhKu45WV+9r7W+jq9HK",
@@ -803,14 +815,16 @@ async def build_majorlogin_payload(open_id, access_token, platform, client_versi
 
         raw_proto = build_proto(payload_dict)
         encrypted = encrypt_api_bytes(raw_proto)
+        
         log_info(f"[MajorLogin] Payload built: {len(raw_proto)}B raw -> {len(encrypted)}B encrypted")
+        log_info(f"[MajorLogin] Device ID: Google|{DEVICE_UUID}")
+        
         return encrypted
 
     except Exception as e:
         log_err(f"MajorLogin payload build failed: {e}")
         traceback.print_exc()
         return None
-
 
 # ==================== send_majorlogin (with debug logging) ====================
 async def send_majorlogin(data, release_version, server_url):
