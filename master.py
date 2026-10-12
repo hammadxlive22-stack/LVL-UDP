@@ -827,13 +827,14 @@ async def build_majorlogin_payload(open_id, access_token, platform, client_versi
         return None
 
 # ==================== send_majorlogin (with debug logging) ====================
+# ==================== send_majorlogin (CORRECT parsing) ====================
 async def send_majorlogin(data, release_version, server_url):
     try:
         if not data:
-            log_err("[MajorLogin] Empty payload - aborting")
+            log_err("[MajorLogin] Empty payload")
             return None
         if not server_url:
-            log_err("[MajorLogin] Missing server_url - aborting")
+            log_err("[MajorLogin] Missing server_url")
             return None
 
         base = server_url.rstrip('/')
@@ -842,15 +843,15 @@ async def send_majorlogin(data, release_version, server_url):
         req_headers = headers.copy()
         req_headers["ReleaseVersion"] = str(release_version)
 
-        log_net(f"[HTTP] POST {url} ({len(data)}B) | ReleaseVersion: {release_version}")
+        log_net(f"[HTTP] POST {url} ({len(data)}B)")
 
         response = await client.post(url, headers=req_headers, data=data)
 
-        log_net(f"[HTTP] Status: {response.status_code} | Resp size: {len(response.content)}B")
+        log_net(f"[HTTP] Status: {response.status_code} | Resp: {len(response.content)}B")
 
         if response.status_code != 200:
             log_err(f"[MajorLogin] HTTP {response.status_code}")
-            log_err(f"[MajorLogin] Body: {response.content[:400]}")
+            log_err(f"[MajorLogin] Body: {response.content[:200].hex()}")
             return None
 
         response_content = response.content
@@ -858,50 +859,41 @@ async def send_majorlogin(data, release_version, server_url):
             log_err(f"[MajorLogin] Response too short: {len(response_content)}B")
             return None
 
+        # ===== SINGLE parse attempt — offset 0 only =====
         try:
             res_proto = MasterTeam_pb2.MajorLoginRes()
             res_proto.ParseFromString(response_content)
-            if getattr(res_proto, "region", None) and getattr(res_proto, "token", None):
-                log_ok(f"[MajorLogin] Direct parse OK | region={res_proto.region} | token_len={len(res_proto.token)}")
-                return res_proto
-        except Exception:
-            pass
-
-        if len(response_content) > 64:
-            try:
-                res_proto = MasterTeam_pb2.MajorLoginRes()
-                res_proto.ParseFromString(response_content[64:])
-                if getattr(res_proto, "region", None) and getattr(res_proto, "token", None):
-                    log_ok(f"[MajorLogin] Offset-64 parse OK | region={res_proto.region}")
-                    return res_proto
-            except Exception:
-                pass
-
-        for offset in range(min(128, len(response_content))):
-            try:
-                candidate = MasterTeam_pb2.MajorLoginRes()
-                candidate.ParseFromString(response_content[offset:])
-                if getattr(candidate, "region", None) and getattr(candidate, "token", None):
-                    log_ok(f"[MajorLogin] Offset-{offset} parse OK | region={candidate.region}")
-                    return candidate
-            except Exception:
-                continue
-
-        try:
-            fallback_proto = MasterTeam_pb2.MajorLoginRes()
-            fallback_proto.ParseFromString(response_content)
-            log_warn("[MajorLogin] Fallback parse (no region/token)")
-            return fallback_proto
-        except Exception:
-            log_err(f"[MajorLogin] Parse failed. Hex: {response_content[:200].hex()}")
+        except Exception as e:
+            log_err(f"[MajorLogin] Parse error: {e}")
+            log_err(f"[MajorLogin] Hex: {response_content[:200].hex()}")
             return None
+
+        # ===== VALIDATE mandatory fields =====
+        region = getattr(res_proto, "region", "")
+        token = getattr(res_proto, "token", "")
+        account_id = getattr(res_proto, "account_id", 0)
+
+        # Agar region/token nahi hain — PROTECTION BYPASS response hai
+        if not region or not token:
+            log_err(f"[MajorLogin] REJECTED by server")
+            log_err(f"[MajorLogin] Region: '{region}' | Token: '{token}' | AccID: {account_id}")
+            log_err(f"[MajorLogin] Hex: {response_content[:200].hex()}")
+            
+            # Protection Bypass detect karo
+            if b"Protection" in response_content or b"Bypass" in response_content:
+                log_err(f"[MajorLogin] ⛔ PROTECTION BYPASS DETECTED")
+                log_err(f"[MajorLogin] Device/account is FLAGGED")
+            
+            return None
+
+        # ===== Success =====
+        log_ok(f"[MajorLogin] OK | region={region} | token_len={len(token)} | acc={account_id}")
+        return res_proto
 
     except Exception as e:
         log_err(f"[MajorLogin] EXCEPTION: {type(e).__name__}: {e}")
         traceback.print_exc()
         return None
-
-
 # ==================== send_getlogin (with debug logging) ====================
 async def send_getlogin(data, base_url, token, release_version):
     try:
